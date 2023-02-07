@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/jinut2/parking/common"
 )
@@ -24,6 +26,7 @@ type SpotRegister interface {
 
 type ParkingLot struct {
 	ParkingLotModel
+	mu sync.Mutex
 }
 
 func NewParkingLot(
@@ -65,4 +68,33 @@ func NewParkingLot(
 			Spots:         spots,
 		},
 	}
+}
+
+func (pl *ParkingLot) AssignSpot(vehicleType common.VehicleType) (spotID string, err error) {
+	pl.mu.Lock()
+	defer pl.mu.Unlock()
+	for id, spot := range pl.Spots {
+		if spot.Type == vehicleType && !spot.Occupied {
+			spot.Occupied = true
+			pl.Spots[id] = spot
+			return id, nil
+		}
+	}
+	return "", fmt.Errorf("error: No spots for %s is available", vehicleType)
+}
+func (pl *ParkingLot) SpotDetails(spotID string) (*SpotModel, error) {
+	if spot, ok := pl.Spots[spotID]; ok {
+		return &spot, nil
+	}
+	return nil, fmt.Errorf("error: spot %s not found", spotID)
+}
+func (pl *ParkingLot) UnassignSpot(spotID string) error {
+	pl.mu.Lock()
+	defer pl.mu.Unlock()
+	if spot, ok := pl.Spots[spotID]; ok {
+		spot.Occupied = false
+		pl.Spots[spotID] = spot
+		return nil
+	}
+	return fmt.Errorf("error: spot %s not found", spotID)
 }
