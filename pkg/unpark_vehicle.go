@@ -51,7 +51,7 @@ func UnparkVehicle(
 	if err != nil {
 		return nil, err
 	}
-	receiptID, err := receiptGenerator.GenerateReceipt(ticketDetails, parkingFees)
+	receiptID, err := receiptGenerator.GenerateReceipt(ticketDetails, parkingFees, parsedExitTime)
 	if err != nil {
 		return nil, err
 	}
