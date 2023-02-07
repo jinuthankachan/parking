@@ -12,7 +12,7 @@
 *.out
 
 # Other files
-exclude/
+ignore/
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

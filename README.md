@@ -1,4 +1,9 @@
 # parking
+
+## How to run
+
+
+## Description
 A parking lot is a dedicated area that is intended for parking vehicles. Parking lots are
 present in every city and suburban area. Shopping malls, stadiums, airports, train stations,
 and similar venues often feature a parking lot with a large capacity. A parking lot can spread
@@ -25,4 +30,4 @@ Given a parking lot with details about the vehicle types that can be parked, the
 spots, and the fee model for the parking lot; compute the fees to be paid for the parked
 vehicles when the vehicle is unparked.
 
-### [Models](https://github.com/jinut2/parking/blob/main/docs/Screenshot%20from%202023-02-05%2009-22-59.png)
+### [Models]
