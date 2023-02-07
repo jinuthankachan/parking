@@ -50,7 +50,7 @@ func calculateParkingFees(
 				}
 			} else {
 				if chargeableHours >= 12 {
-					feeAmount = parkingRates[common.Key_0_12_Hrs]
+					feeAmount = parkingRates[common.Key_12_24_Hrs]
 				} else {
 					feeAmount = parkingRates[common.Key_0_12_Hrs]
 				}
