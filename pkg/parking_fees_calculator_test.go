@@ -68,6 +68,46 @@ func Test_calculateParkingFees(t *testing.T) {
 			want:    defaultCurrency(10000),
 			wantErr: false,
 		},
+		{
+			name: "Park 2 wheeler in Stadium for 3 hours 40 mins",
+			args: args{
+				common.TwoWheeler,
+				common.Stadium,
+				(3 * time.Hour) + (40 * time.Minute),
+			},
+			want:    defaultCurrency(3000),
+			wantErr: false,
+		},
+		{
+			name: "Park 2 wheeler in Stadium for 14 hours 59 mins",
+			args: args{
+				common.TwoWheeler,
+				common.Stadium,
+				(14 * time.Hour) + (59 * time.Minute),
+			},
+			want:    defaultCurrency(39000),
+			wantErr: false,
+		},
+		{
+			name: "Park SUV in Stadium for 3 hours 40 mins",
+			args: args{
+				common.Light4Wheeler,
+				common.Stadium,
+				(11 * time.Hour) + (30 * time.Minute),
+			},
+			want:    defaultCurrency(18000),
+			wantErr: false,
+		},
+		{
+			name: "Park SUV in Stadium for 13 hours 5 mins",
+			args: args{
+				common.Light4Wheeler,
+				common.Stadium,
+				(13 * time.Hour) + (5 * time.Minute),
+			},
+			want:    defaultCurrency(58000),
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

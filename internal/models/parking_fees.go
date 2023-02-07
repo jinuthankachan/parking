@@ -30,12 +30,29 @@ func NewParkingLotFeesModel(feesModelName common.FeesModelName) *ParkingLotFeesM
 			},
 		},
 		common.Airport: {
-			common.TwoWheeler:    {},
-			common.Light4Wheeler: {},
+			common.TwoWheeler: {
+				common.Key_0_1_Hrs:  0,
+				common.Key_1_8_Hrs:  40,
+				common.Key_8_24_Hrs: 60,
+				common.KeyPerDay:    80,
+			},
+			common.Light4Wheeler: {
+				common.Key_0_12_Hrs:  60,
+				common.Key_12_24_Hrs: 80,
+				common.KeyPerDay:     100,
+			},
 		},
 		common.Stadium: {
-			common.TwoWheeler:    {},
-			common.Light4Wheeler: {},
+			common.TwoWheeler: {
+				common.Key_0_4_Hrs:      30,
+				common.Key_4_12_Hrs:     60,
+				common.Key_12_Inf_PerHr: 100,
+			},
+			common.Light4Wheeler: {
+				common.Key_0_4_Hrs:      60,
+				common.Key_4_12_Hrs:     120,
+				common.Key_12_Inf_PerHr: 200,
+			},
 		},
 	}
 	return &ParkingLotFeesModel{
