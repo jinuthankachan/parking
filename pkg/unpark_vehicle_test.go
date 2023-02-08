@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
@@ -68,14 +69,15 @@ func TestUnparkVehicle(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// got, err := UnparkVehicle(tt.args.ticketID, tt.args.exitTime, tt.args.timeZone, tt.args.spotRegister, tt.args.ticketCounter, tt.args.parkingLotFeeDetails, tt.args.receiptGenerator)
-			// if (err != nil) != tt.wantErr {
-			// 	t.Errorf("UnparkVehicle() error = %v, wantErr %v", err, tt.wantErr)
-			// 	return
-			// }
-			// if !reflect.DeepEqual(got, tt.want) {
-			// 	t.Errorf("UnparkVehicle() = %v, want %v", got, tt.want)
-			// }
+			vehicleExit := models.MockVehicleExit(tt.args.ticketID, tt.args.exitTime, tt.args.timeZone)
+			got, err := UnparkVehicle(vehicleExit, tt.args.spotRegister, tt.args.ticketCounter, tt.args.parkingLotFeeDetails, tt.args.receiptGenerator, tt.args.timeZone)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UnparkVehicle() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UnparkVehicle() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
