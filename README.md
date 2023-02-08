@@ -1,7 +1,16 @@
 # parking
 
-## How to run
+## How to use
 
+### test
+```
+make test
+```
+
+### run 
+```
+make run
+```
 
 ## Description
 A parking lot is a dedicated area that is intended for parking vehicles. Parking lots are
@@ -29,5 +38,3 @@ exit date-time, and the applicable fees to be paid.
 Given a parking lot with details about the vehicle types that can be parked, the number of
 spots, and the fee model for the parking lot; compute the fees to be paid for the parked
 vehicles when the vehicle is unparked.
-
-### [Models]
