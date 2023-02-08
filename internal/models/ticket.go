@@ -34,7 +34,7 @@ func (t *Tickets) AllotTicket(spotID string, entryTime time.Time) (ticketID stri
 		EntryTime: entryTime,
 	}
 	t.mu.Lock()
-	ticketID = fmt.Sprintf("%d", len(t.store))
+	ticketID = fmt.Sprintf("%d", len(t.store)+1)
 	t.store[ticketID] = ticket
 	t.mu.Unlock()
 	return

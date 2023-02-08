@@ -27,7 +27,7 @@ func ParkVehicle(
 	if err != nil {
 		return nil, err
 	}
-	parsedEntryTime, err := time.ParseInLocation("02-Jan-2006 15:04", entryTime, loc)
+	parsedEntryTime, err := time.ParseInLocation(common.DefaultTimeFormat, entryTime, loc)
 	if err != nil {
 		return nil, err
 	}

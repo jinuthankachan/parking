@@ -30,7 +30,7 @@ func UnparkVehicle(
 	if err != nil {
 		return nil, err
 	}
-	parsedExitTime, err := time.ParseInLocation("02-Jan-2006 15:04", exitTime, loc)
+	parsedExitTime, err := time.ParseInLocation(common.DefaultTimeFormat, exitTime, loc)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func UnparkVehicle(
 	}
 	return &ParkingReceipt{
 		ReceiptNumber: receiptID,
-		EntryTime:     ticketDetails.EntryTime.In(loc).Format("02-Jan-2006 15:04"),
+		EntryTime:     ticketDetails.EntryTime.In(loc).Format(common.DefaultTimeFormat),
 		ExitTime:      exitTime,
 		Fees:          parkingFees.DisplayValue(),
 	}, nil
