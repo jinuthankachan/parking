@@ -28,7 +28,7 @@ func TestParkVehicle(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Park a bike",
+			name: "Park a bike 01",
 			args: args{
 				spotRegister:  mallParkingLot,
 				ticketCounter: mallTickets,
@@ -44,7 +44,7 @@ func TestParkVehicle(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Park a scooter",
+			name: "Park a scooter 02",
 			args: args{
 				spotRegister:  mallParkingLot,
 				ticketCounter: mallTickets,
@@ -60,7 +60,7 @@ func TestParkVehicle(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Park a scooter",
+			name: "Park a scooter 03",
 			args: args{
 				spotRegister:  mallParkingLot,
 				ticketCounter: mallTickets,
@@ -76,7 +76,7 @@ func TestParkVehicle(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Park a scooter",
+			name: "Park a scooter 04",
 			args: args{
 				spotRegister:  mallParkingLot,
 				ticketCounter: mallTickets,
@@ -86,6 +86,21 @@ func TestParkVehicle(t *testing.T) {
 			},
 			want:    nil,
 			wantErr: true,
+		},
+		{
+			name: "Park a car 01",
+			args: args{
+				spotRegister:  mallParkingLot,
+				ticketCounter: mallTickets,
+				vehicleType:   common.Light4Wheeler,
+				entryTime:     "29-May-2022 13:54:07",
+				timeZone:      timeZone,
+			},
+			want: &ParkingTicket{
+				TicketNumber: "4",
+				SpotNumber:   "4",
+				EntryTime:    "29-May-2022 13:54:07",
+			},
 		},
 	}
 	for _, tt := range tests {
