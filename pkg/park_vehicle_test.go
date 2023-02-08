@@ -3,14 +3,25 @@ package pkg
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/jinut2/parking/common"
-	"github.com/jinut2/parking/internal/models"
+	"github.com/jinut2/parking/models"
 )
 
-var timeZone = common.DefaultTimezone
-var mallParkingLot = models.NewParkingLot(common.Mall, 3, 2, 1)
-var mallTickets = models.NewTickets()
+var timeZone *time.Location
+var mallParkingLot *models.ParkingLot
+var mallTickets *models.Tickets
+
+func init() {
+	var err error
+	timeZone, err = time.LoadLocation(common.DefaultTimezone)
+	if err != nil {
+		panic(err)
+	}
+	mallParkingLot = models.NewParkingLot(common.Mall, 3, 2, 1)
+	mallTickets = models.NewTickets()
+}
 
 func TestParkVehicle(t *testing.T) {
 
@@ -19,7 +30,7 @@ func TestParkVehicle(t *testing.T) {
 		ticketCounter models.TicketCounter
 		vehicleType   common.VehicleType
 		entryTime     string
-		timeZone      string
+		timeZone      *time.Location
 	}
 	tests := []struct {
 		name    string
@@ -105,7 +116,8 @@ func TestParkVehicle(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParkVehicle(tt.args.spotRegister, tt.args.ticketCounter, tt.args.vehicleType, tt.args.entryTime, tt.args.timeZone)
+			vehicleEntry := models.MockVehicleEntry(tt.args.vehicleType, tt.args.entryTime, tt.args.timeZone)
+			got, err := ParkVehicle(tt.args.spotRegister, tt.args.ticketCounter, vehicleEntry, tt.args.timeZone)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ParkVehicle() error = %v, wantErr %v", err, tt.wantErr)
 				return

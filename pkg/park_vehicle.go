@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/jinut2/parking/common"
-	"github.com/jinut2/parking/internal/models"
+	"github.com/jinut2/parking/models"
 )
 
 type ParkingTicket struct {
@@ -16,32 +16,21 @@ type ParkingTicket struct {
 func ParkVehicle(
 	spotRegister models.SpotRegister,
 	ticketCounter models.TicketCounter,
-	vehicleType common.VehicleType,
-	entryTime string,
-	timeZone string,
+	vehicleEntry models.VehicleEntry,
+	timeZone *time.Location,
 ) (*ParkingTicket, error) {
-	if timeZone == "" {
-		timeZone = common.DefaultTimezone
-	}
-	loc, err := time.LoadLocation(timeZone)
+	reservedSpotID, err := spotRegister.AssignSpot(vehicleEntry.VehicleType())
 	if err != nil {
 		return nil, err
 	}
-	parsedEntryTime, err := time.ParseInLocation(common.DefaultTimeFormat, entryTime, loc)
-	if err != nil {
-		return nil, err
-	}
-	reservedSpotID, err := spotRegister.AssignSpot(vehicleType)
-	if err != nil {
-		return nil, err
-	}
-	allotedTicketID, err := ticketCounter.AllotTicket(reservedSpotID, parsedEntryTime)
+	vehicleEntryTime := vehicleEntry.EntryTime()
+	allotedTicketID, err := ticketCounter.AllotTicket(reservedSpotID, vehicleEntryTime)
 	if err != nil {
 		return nil, err
 	}
 	return &ParkingTicket{
 		TicketNumber: allotedTicketID,
 		SpotNumber:   reservedSpotID,
-		EntryTime:    entryTime,
+		EntryTime:    vehicleEntryTime.In(timeZone).Format(common.DefaultTimeFormat),
 	}, nil
 }

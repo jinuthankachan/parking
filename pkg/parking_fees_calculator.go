@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jinut2/parking/common"
-	"github.com/jinut2/parking/internal/models"
+	"github.com/jinut2/parking/models"
 )
 
 func parkingRateFor(durationKey string, parkingRates map[string]int64) (int64, error) {

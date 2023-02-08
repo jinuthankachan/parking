@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/jinut2/parking/common"
-	"github.com/jinut2/parking/internal/models"
+	"github.com/jinut2/parking/models"
 )
 
 type ParkingReceipt struct {
@@ -15,30 +15,19 @@ type ParkingReceipt struct {
 }
 
 func UnparkVehicle(
-	ticketID string,
-	exitTime string,
-	timeZone string,
+	vehicleExit models.VehicleExit,
 	spotRegister models.SpotRegister,
 	ticketCounter models.TicketCounter,
 	parkingLotFeeDetails models.ParkingLotFeeDetails,
 	receiptGenerator models.ReceiptGenerator,
+	timeZone *time.Location,
 ) (*ParkingReceipt, error) {
-	if timeZone == "" {
-		timeZone = common.DefaultTimezone
-	}
-	loc, err := time.LoadLocation(timeZone)
+	exitTime := vehicleExit.ExitTime()
+	ticketDetails, err := ticketCounter.TicketDetails(vehicleExit.TicketID())
 	if err != nil {
 		return nil, err
 	}
-	parsedExitTime, err := time.ParseInLocation(common.DefaultTimeFormat, exitTime, loc)
-	if err != nil {
-		panic(err)
-	}
-	ticketDetails, err := ticketCounter.TicketDetails(ticketID)
-	if err != nil {
-		return nil, err
-	}
-	totalTimeParked := parsedExitTime.Sub(ticketDetails.EntryTime)
+	totalTimeParked := exitTime.Sub(ticketDetails.EntryTime)
 	spotDetails, err := spotRegister.SpotDetails(ticketDetails.SpotID)
 	if err != nil {
 		return nil, err
@@ -51,14 +40,14 @@ func UnparkVehicle(
 	if err != nil {
 		return nil, err
 	}
-	receiptID, err := receiptGenerator.GenerateReceipt(ticketDetails, parkingFees, parsedExitTime)
+	receiptID, err := receiptGenerator.GenerateReceipt(ticketDetails, parkingFees, exitTime)
 	if err != nil {
 		return nil, err
 	}
 	return &ParkingReceipt{
 		ReceiptNumber: receiptID,
-		EntryTime:     ticketDetails.EntryTime.In(loc).Format(common.DefaultTimeFormat),
-		ExitTime:      exitTime,
+		EntryTime:     ticketDetails.EntryTime.In(timeZone).Format(common.DefaultTimeFormat),
+		ExitTime:      exitTime.In(timeZone).Format(common.DefaultTimeFormat),
 		Fees:          parkingFees.DisplayValue(),
 	}, nil
 }

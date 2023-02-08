@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jinut2/parking/common"
-	"github.com/jinut2/parking/internal/models"
+	"github.com/jinut2/parking/models"
 )
 
 func defaultCurrency(valueInSubUnit int64) *common.Currency {
