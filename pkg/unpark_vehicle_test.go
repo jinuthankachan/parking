@@ -46,6 +46,25 @@ func TestUnparkVehicle(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "Unpark scooter 01",
+			args: args{
+				ticketID:             "1",
+				exitTime:             "29-May-2022 17:44:07",
+				timeZone:             timeZone,
+				spotRegister:         mallParkingLot,
+				ticketCounter:        mallTickets,
+				parkingLotFeeDetails: mallFeeDetails,
+				receiptGenerator:     mallReceipts,
+			},
+			want: &ParkingReceipt{
+				ReceiptNumber: "R-2",
+				EntryTime:     "29-May-2022 14:04:07",
+				ExitTime:      "29-May-2022 17:44:07",
+				Fees:          "₹ 40.00",
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
