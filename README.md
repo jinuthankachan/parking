@@ -2,6 +2,12 @@
 
 ## How to use
 
+* The pkg gives you two methods to use
+  * ParkVehicle - to get a ticket for parking a vehicle
+  * UnparkVehicle - to get the receipt for the parking charges
+* Refer `main.go` for sample use of these methods.
+* Use `make` for the tests where most of the use cases are covered.
+
 ### test
 ```
 make test
