@@ -2,10 +2,10 @@
 
 ## How to use
 
-* The pkg gives you two methods to use
+* The `services` package provides two methods to manage a parking lot.
   * ParkVehicle - to get a ticket for parking a vehicle
   * UnparkVehicle - to get the receipt for the parking charges
-* Refer `main.go` for sample use of these methods.
+* Refer `main.go` for sample.
 * Use `make` for the tests where most of the use cases are covered.
 
 ### test
