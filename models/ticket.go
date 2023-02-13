@@ -21,7 +21,7 @@ type Tickets struct {
 	mu    sync.Mutex
 }
 
-func NewTickets() *Tickets {
+func NewTicketCounter() *Tickets {
 	store := make(map[string]TicketModel)
 	return &Tickets{
 		store: store,

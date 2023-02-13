@@ -13,7 +13,7 @@ type ReceiptModel struct {
 	Fees     *common.Currency
 }
 
-type ReceiptGenerator interface {
+type ReceiptBook interface {
 	GenerateReceipt(ticket *TicketModel, fees *common.Currency, exitTime time.Time) (receiptID string, err error)
 }
 
@@ -22,7 +22,7 @@ type Receipts struct {
 	mu    sync.Mutex
 }
 
-func NewReceipts() *Receipts {
+func NewReceiptBook() *Receipts {
 	receiptsStore := make(map[string]ReceiptModel)
 	return &Receipts{
 		store: receiptsStore,

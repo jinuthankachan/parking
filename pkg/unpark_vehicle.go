@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jinut2/parking/common"
@@ -8,10 +9,14 @@ import (
 )
 
 type ParkingReceipt struct {
-	ReceiptNumber string
-	EntryTime     string
-	ExitTime      string
-	Fees          string
+	ReceiptID string
+	EntryTime string
+	ExitTime  string
+	Fees      string
+}
+
+func (r *ParkingReceipt) Print() string {
+	return fmt.Sprintf("%+v", *r)
 }
 
 func UnparkVehicle(
@@ -19,7 +24,7 @@ func UnparkVehicle(
 	spotRegister models.SpotRegister,
 	ticketCounter models.TicketCounter,
 	parkingLotFeeDetails models.ParkingLotFeeDetails,
-	receiptGenerator models.ReceiptGenerator,
+	ReceiptBook models.ReceiptBook,
 	timeZone *time.Location,
 ) (*ParkingReceipt, error) {
 	exitTime := vehicleExit.ExitTime()
@@ -40,14 +45,14 @@ func UnparkVehicle(
 	if err != nil {
 		return nil, err
 	}
-	receiptID, err := receiptGenerator.GenerateReceipt(ticketDetails, parkingFees, exitTime)
+	receiptID, err := ReceiptBook.GenerateReceipt(ticketDetails, parkingFees, exitTime)
 	if err != nil {
 		return nil, err
 	}
 	return &ParkingReceipt{
-		ReceiptNumber: receiptID,
-		EntryTime:     ticketDetails.EntryTime.In(timeZone).Format(common.DefaultTimeFormat),
-		ExitTime:      exitTime.In(timeZone).Format(common.DefaultTimeFormat),
-		Fees:          parkingFees.DisplayValue(),
+		ReceiptID: receiptID,
+		EntryTime: ticketDetails.EntryTime.In(timeZone).Format(common.DefaultTimeFormat),
+		ExitTime:  exitTime.In(timeZone).Format(common.DefaultTimeFormat),
+		Fees:      parkingFees.DisplayValue(),
 	}, nil
 }

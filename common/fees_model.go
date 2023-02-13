@@ -1,5 +1,7 @@
 package common
 
+import "fmt"
+
 type FeesModelName string
 
 const (
@@ -7,6 +9,18 @@ const (
 	Stadium FeesModelName = "stadium"
 	Airport FeesModelName = "airport"
 )
+
+func FeesModelNameFromParkingType(parkingLotType string) (FeesModelName, error) {
+	var feesModelNameStrMap map[string]FeesModelName = map[string]FeesModelName{
+		"mall":    Mall,
+		"stadium": Stadium,
+		"airport": Airport,
+	}
+	if feeModel, ok := feesModelNameStrMap[parkingLotType]; ok {
+		return feeModel, nil
+	}
+	return FeesModelName(""), fmt.Errorf("error: unknown parking lot type %s", parkingLotType)
+}
 
 const (
 	KeyPerHourRate = "per_hour"

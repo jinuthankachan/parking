@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jinut2/parking/common"
@@ -8,9 +9,13 @@ import (
 )
 
 type ParkingTicket struct {
-	TicketNumber string
-	SpotNumber   string
-	EntryTime    string
+	TicketID  string
+	SpotID    string
+	EntryTime string
+}
+
+func (r *ParkingTicket) Print() string {
+	return fmt.Sprintf("%+v", *r)
 }
 
 func ParkVehicle(
@@ -29,8 +34,8 @@ func ParkVehicle(
 		return nil, err
 	}
 	return &ParkingTicket{
-		TicketNumber: allotedTicketID,
-		SpotNumber:   reservedSpotID,
-		EntryTime:    vehicleEntryTime.In(timeZone).Format(common.DefaultTimeFormat),
+		TicketID:  allotedTicketID,
+		SpotID:    reservedSpotID,
+		EntryTime: vehicleEntryTime.In(timeZone).Format(common.DefaultTimeFormat),
 	}, nil
 }

@@ -10,8 +10,8 @@ import (
 )
 
 var timeZone *time.Location
-var mallParkingLot *models.ParkingLot
-var mallTickets *models.Tickets
+var mallSpotsRegister *models.Spots
+var mallTicketCounter *models.Tickets
 
 func init() {
 	var err error
@@ -19,8 +19,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	mallParkingLot = models.NewParkingLot(common.Mall, 3, 2, 1)
-	mallTickets = models.NewTickets()
+	mallSpotsRegister = models.NewSpotsRegister(3, 2, 1)
+	mallTicketCounter = models.NewTicketCounter()
 }
 
 func TestParkVehicle(t *testing.T) {
@@ -41,56 +41,56 @@ func TestParkVehicle(t *testing.T) {
 		{
 			name: "Park a bike 01",
 			args: args{
-				spotRegister:  mallParkingLot,
-				ticketCounter: mallTickets,
+				spotRegister:  mallSpotsRegister,
+				ticketCounter: mallTicketCounter,
 				vehicleType:   common.TwoWheeler,
 				entryTime:     "29-May-2022 14:04:07",
 				timeZone:      timeZone,
 			},
 			want: &ParkingTicket{
-				TicketNumber: "1",
-				SpotNumber:   "1",
-				EntryTime:    "29-May-2022 14:04:07",
+				TicketID:  "1",
+				SpotID:    "1",
+				EntryTime: "29-May-2022 14:04:07",
 			},
 			wantErr: false,
 		},
 		{
 			name: "Park a scooter 02",
 			args: args{
-				spotRegister:  mallParkingLot,
-				ticketCounter: mallTickets,
+				spotRegister:  mallSpotsRegister,
+				ticketCounter: mallTicketCounter,
 				vehicleType:   common.TwoWheeler,
 				entryTime:     "29-May-2022 14:44:07",
 				timeZone:      timeZone,
 			},
 			want: &ParkingTicket{
-				TicketNumber: "2",
-				SpotNumber:   "2",
-				EntryTime:    "29-May-2022 14:44:07",
+				TicketID:  "2",
+				SpotID:    "2",
+				EntryTime: "29-May-2022 14:44:07",
 			},
 			wantErr: false,
 		},
 		{
 			name: "Park a scooter 03",
 			args: args{
-				spotRegister:  mallParkingLot,
-				ticketCounter: mallTickets,
+				spotRegister:  mallSpotsRegister,
+				ticketCounter: mallTicketCounter,
 				vehicleType:   common.TwoWheeler,
 				entryTime:     "29-May-2022 15:59:07",
 				timeZone:      timeZone,
 			},
 			want: &ParkingTicket{
-				TicketNumber: "3",
-				SpotNumber:   "3",
-				EntryTime:    "29-May-2022 15:59:07",
+				TicketID:  "3",
+				SpotID:    "3",
+				EntryTime: "29-May-2022 15:59:07",
 			},
 			wantErr: false,
 		},
 		{
 			name: "Park a scooter 04",
 			args: args{
-				spotRegister:  mallParkingLot,
-				ticketCounter: mallTickets,
+				spotRegister:  mallSpotsRegister,
+				ticketCounter: mallTicketCounter,
 				vehicleType:   common.TwoWheeler,
 				entryTime:     "29-May-2022 16:54:07",
 				timeZone:      timeZone,
@@ -101,16 +101,16 @@ func TestParkVehicle(t *testing.T) {
 		{
 			name: "Park a car 01",
 			args: args{
-				spotRegister:  mallParkingLot,
-				ticketCounter: mallTickets,
+				spotRegister:  mallSpotsRegister,
+				ticketCounter: mallTicketCounter,
 				vehicleType:   common.Light4Wheeler,
 				entryTime:     "29-May-2022 13:54:07",
 				timeZone:      timeZone,
 			},
 			want: &ParkingTicket{
-				TicketNumber: "4",
-				SpotNumber:   "4",
-				EntryTime:    "29-May-2022 13:54:07",
+				TicketID:  "4",
+				SpotID:    "4",
+				EntryTime: "29-May-2022 13:54:07",
 			},
 		},
 	}
