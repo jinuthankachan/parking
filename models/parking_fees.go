@@ -2,72 +2,191 @@ package models
 
 import (
 	"fmt"
+	"math"
+	"time"
 
 	"github.com/jinut2/parking/common"
 )
 
-type ParkingLotFeeDetails interface {
-	FeesModelName() common.FeesModelName
-	ParkingRates(common.VehicleType) (map[string]int64, error)
+type ParkingLotFeeModel struct {
+	FeesModelName common.FeesModelName
+	VehicleType   common.VehicleType
+	SlabType      common.FeeSlabType
+	LowerLimit    time.Duration
+	UpperLimit    time.Duration
+	Charge        *common.Currency
 }
 
-type ParkingLotFeesModel struct {
-	feesModelName common.FeesModelName
-	tariff        map[common.VehicleType]map[string]int64
+type ParkingLotFees struct {
+	store []ParkingLotFeeModel
 }
 
-func NewParkingLotFeesModel(feesModelName common.FeesModelName) *ParkingLotFeesModel {
-	tariff := map[common.FeesModelName]map[common.VehicleType]map[string]int64{
-		common.Mall: {
-			common.TwoWheeler: {
-				common.KeyPerHourRate: 10,
-			},
-			common.Light4Wheeler: {
-				common.KeyPerHourRate: 20,
-			},
-			common.HeavyVehicle: {
-				common.KeyPerHourRate: 50,
-			},
+type ParkingRatesFetcher interface {
+	GetAllSlabsUnderTime(upperLimit time.Duration, feeModelName common.FeesModelName, vehicleType common.VehicleType) ([]ParkingLotFeeModel, error)
+	GetSlabForTime(duration time.Duration, feeModelName common.FeesModelName, vehicleType common.VehicleType) (*ParkingLotFeeModel, error)
+}
+
+func NewParkingLotFees() *ParkingLotFees {
+	store := []ParkingLotFeeModel{
+		{
+			FeesModelName: common.Mall,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 10),
 		},
-		common.Airport: {
-			common.TwoWheeler: {
-				common.Key_0_1_Hrs:  0,
-				common.Key_1_8_Hrs:  40,
-				common.Key_8_24_Hrs: 60,
-				common.KeyPerDay:    80,
-			},
-			common.Light4Wheeler: {
-				common.Key_0_12_Hrs:  60,
-				common.Key_12_24_Hrs: 80,
-				common.KeyPerDay:     100,
-			},
+		{
+			FeesModelName: common.Mall,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 20),
 		},
-		common.Stadium: {
-			common.TwoWheeler: {
-				common.Key_0_4_Hrs:      30,
-				common.Key_4_12_Hrs:     60,
-				common.Key_12_Inf_PerHr: 100,
-			},
-			common.Light4Wheeler: {
-				common.Key_0_4_Hrs:      60,
-				common.Key_4_12_Hrs:     120,
-				common.Key_12_Inf_PerHr: 200,
-			},
+		{
+			FeesModelName: common.Mall,
+			VehicleType:   common.HeavyVehicle,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 50),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0,
+			UpperLimit:    1 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 0),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    1 * time.Hour,
+			UpperLimit:    8 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 40),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    8 * time.Hour,
+			UpperLimit:    24 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 60),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.PerDaySlab,
+			LowerLimit:    24 * time.Hour,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 80),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0 * time.Hour,
+			UpperLimit:    12 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 60),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    12 * time.Hour,
+			UpperLimit:    24 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 80),
+		},
+		{
+			FeesModelName: common.Airport,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.PerDaySlab,
+			LowerLimit:    24 * time.Hour,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 100),
+		},
+		{
+			FeesModelName: common.Stadium,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0 * time.Hour,
+			UpperLimit:    4 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 30),
+		},
+		{
+			FeesModelName: common.Stadium,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    4 * time.Hour,
+			UpperLimit:    12 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 60),
+		},
+		{
+			FeesModelName: common.Stadium,
+			VehicleType:   common.TwoWheeler,
+			SlabType:      common.PerHourSlab,
+			LowerLimit:    12 * time.Hour,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 100),
+		},
+
+		{
+			FeesModelName: common.Stadium,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    0 * time.Hour,
+			UpperLimit:    4 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 60),
+		},
+		{
+			FeesModelName: common.Stadium,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.FlatSlab,
+			LowerLimit:    4 * time.Hour,
+			UpperLimit:    12 * time.Hour,
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 120),
+		},
+		{
+			FeesModelName: common.Stadium,
+			VehicleType:   common.Light4Wheeler,
+			SlabType:      common.PerHourSlab,
+			LowerLimit:    12 * time.Hour,
+			UpperLimit:    time.Duration(math.MaxInt64),
+			Charge:        common.DefaultCurrency(common.DefaultCurrencySubUnitConversionFactor * 200),
 		},
 	}
-	return &ParkingLotFeesModel{
-		feesModelName: feesModelName,
-		tariff:        tariff[feesModelName],
+
+	return &ParkingLotFees{
+		store: store,
 	}
 }
 
-func (fm *ParkingLotFeesModel) ParkingRates(vehicleType common.VehicleType) (map[string]int64, error) {
-	if tariff, ok := fm.tariff[vehicleType]; ok {
-		return tariff, nil
+func (plf *ParkingLotFees) GetAllSlabsUnderTime(duration time.Duration,
+	feeModelName common.FeesModelName,
+	vehicleType common.VehicleType,
+) (slabs []ParkingLotFeeModel, err error) {
+	for _, slab := range plf.store {
+		if slab.FeesModelName == feeModelName && vehicleType == slab.VehicleType && (duration >= slab.LowerLimit) {
+			slabs = append(slabs, slab)
+		}
 	}
-	return nil, fmt.Errorf("error: %s vehicle not allowed in %s parking", vehicleType, fm.feesModelName)
+	if len(slabs) == 0 {
+		err = fmt.Errorf("error: no slabs found for %+v", duration)
+	}
+	return
 }
 
-func (fm *ParkingLotFeesModel) FeesModelName() common.FeesModelName {
-	return fm.feesModelName
+func (plf *ParkingLotFees) GetSlabForTime(duration time.Duration,
+	feeModelName common.FeesModelName,
+	vehicleType common.VehicleType,
+) (*ParkingLotFeeModel, error) {
+	for _, slab := range plf.store {
+		if slab.FeesModelName == feeModelName && vehicleType == slab.VehicleType && (duration < slab.UpperLimit) && (duration >= slab.LowerLimit) {
+			return &slab, nil
+		}
+	}
+	return nil, fmt.Errorf("error: no slabs found for %+v", duration)
 }

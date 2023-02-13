@@ -23,8 +23,8 @@ func UnparkVehicle(
 	vehicleExit models.VehicleExit,
 	spotRegister models.SpotRegister,
 	ticketCounter models.TicketCounter,
-	parkingLotFeeDetails models.ParkingLotFeeDetails,
 	ReceiptBook models.ReceiptBook,
+	feeCalculator ParkingFeeCalculator,
 	timeZone *time.Location,
 ) (*ParkingReceipt, error) {
 	exitTime := vehicleExit.ExitTime()
@@ -37,9 +37,8 @@ func UnparkVehicle(
 	if err != nil {
 		return nil, err
 	}
-	parkingFees, err := calculateParkingFees(
+	parkingFees, err := feeCalculator.Calculate(
 		spotDetails.Type,
-		parkingLotFeeDetails,
 		totalTimeParked,
 	)
 	if err != nil {

@@ -5,16 +5,22 @@ import (
 	"time"
 
 	"github.com/jinut2/parking/common"
+	"github.com/jinut2/parking/pkg"
 	"github.com/jinut2/parking/services"
 )
 
-func main() {
-	mallParkingLot, err := services.NewParkingLot("mall", common.DefaultTimezone, 3, 2, 1)
+var parkingLot *services.ParkingLotService
+
+func init() {
+	var err error
+	parkingLot, err = services.NewParkingLot(common.DefaultTimezone, 3, 2, 1, pkg.MallFeeCalculator())
 	if err != nil {
 		panic(err)
 	}
+}
 
-	ticket01, err := mallParkingLot.ParkVehicle(common.TwoWheeler)
+func main() {
+	ticket01, err := parkingLot.ParkVehicle(common.TwoWheeler)
 	if err != nil {
 		log.Fatalf("No entry possible due to %s", err)
 	}
@@ -23,7 +29,7 @@ func main() {
 	time.Sleep(time.Second)
 
 	// Unpark the two wheeler
-	receipt01, err := mallParkingLot.UnparkVehicle(ticket01.TicketID)
+	receipt01, err := parkingLot.UnparkVehicle(ticket01.TicketID)
 	if err != nil {
 		log.Fatalf("Unable to mark exit due to %s", err)
 	}
